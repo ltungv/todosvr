@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -18,12 +19,19 @@ var (
 	port = 3000
 )
 
+func init() {
+	flag.StringVar(&host, "host", "", "Host address to bind to")
+	flag.IntVar(&port, "port", 3000, "Port number to bind to")
+}
+
 func main() {
+	flag.Parse()
+
 	// cài đặt đường dẫn cho ứng dụng (routes)
 	r := chi.NewRouter()
 	r.Use(
 		middleware.JSONResponse(),
-		middleware.LogRequest(log.New(os.Stdout, "hello-", log.LstdFlags)),
+		middleware.LogRequest(log.New(os.Stdout, "", log.LstdFlags)),
 	)
 	r.Get("/hello", handler.GetHello())
 
@@ -40,6 +48,7 @@ func main() {
 
 	// TODO: graceful shutdown
 	// bắt đầu chạy server
+	log.Printf("Starting server on %s", addr)
 	if err := svr.ListenAndServe(); err != nil {
 		log.Println(err)
 	}
