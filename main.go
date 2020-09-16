@@ -14,7 +14,6 @@ import (
 )
 
 var (
-	// TODO: nhận thông tin từ giao diện dòng lệnh (command line interrface)
 	host = ""
 	port = 3000
 )
@@ -27,29 +26,38 @@ func init() {
 func main() {
 	flag.Parse()
 
-	// cài đặt đường dẫn cho ứng dụng (routes)
-	r := chi.NewRouter()
-	r.Use(
-		middleware.JSONResponse(),
-		middleware.LogRequest(log.New(os.Stdout, "", log.LstdFlags)),
-	)
-	r.Get("/hello", handler.GetHello())
+	// TODO: graceful shutdown (thêm hàm số vào cấu trúc `Service` để ngưng server)
+	s := Service{}
+	if err := s.Serve(fmt.Sprintf("%s:%d", host, port)); err != nil {
+		log.Println(err)
+	}
+}
 
-	// tạo struct `http.Server`
-	addr := fmt.Sprintf("%s:%d", host, port)
+// Service chứa các hàm số dùng để khởi tạo và chạy dịch vụ API
+type Service struct{}
+
+// Serve khởi tạo và chạy server trên địa chỉ được nhận
+func (s *Service) Serve(addr string) error {
 	svr := http.Server{
 		Addr:         addr,
-		Handler:      r,
+		Handler:      s.routes(),
 		TLSConfig:    nil,
 		WriteTimeout: time.Second, // thời gian tối đa được dùng để ghi gói tin
 		ReadTimeout:  time.Second, // thời gian tối đa được dùng để đọc gói tin
 		IdleTimeout:  time.Second, // thời gian tối đa kết nối được phép ngưng hoạt động
 	}
 
-	// TODO: graceful shutdown
-	// bắt đầu chạy server
 	log.Printf("Starting server on %s", addr)
-	if err := svr.ListenAndServe(); err != nil {
-		log.Println(err)
-	}
+	return svr.ListenAndServe()
+}
+
+// routes cài đặt các đường dẫn HTTP được hỗ trợ bởi dịch vụ
+func (s *Service) routes() http.Handler {
+	r := chi.NewRouter()
+	r.Use(
+		middleware.JSONResponse(),
+		middleware.LogRequest(log.New(os.Stdout, "", log.LstdFlags)),
+	)
+	r.Get("/hello", handler.GetHello())
+	return r
 }
