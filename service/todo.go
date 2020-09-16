@@ -19,6 +19,7 @@ func NewTodo() *Todo {
 }
 
 // Todo chứa các hàm số dùng để khởi tạo và chạy dịch vụ API
+// TODO: thêm database để  lưu trữ dữ liệu người dùng
 type Todo struct {
 	router chi.Router
 }
@@ -36,6 +37,7 @@ func (t *Todo) GetHello() http.HandlerFunc {
 	}
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// TODO: xử dụng json.Encoder và json.Decoder
 		b, err := json.Marshal(response{Message: quote.HelloV3()})
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
@@ -46,6 +48,7 @@ func (t *Todo) GetHello() http.HandlerFunc {
 }
 
 // routes cài đặt các đường dẫn HTTP được hỗ trợ bởi dịch vụ
+// TODO: thêm handlers để xử lý thao tác CRUD
 func (t *Todo) routes() {
 	t.router.Use(
 		middleware.JSONResponse(),
