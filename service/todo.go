@@ -42,6 +42,8 @@ func (todo *Todo) routes() {
 		middleware.JSONResponse(),
 		middleware.LogRequest(log.New(os.Stdout, "", log.LstdFlags)),
 	)
+
+	// TODO: xử lý PUT, GET và DELETE cho đường dẫn /todo
 	todo.router.Get("/hello", todo.GetHello())
 	todo.router.Post("/todo", todo.CreateOneTask())
 }
