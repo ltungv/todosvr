@@ -54,6 +54,10 @@ func (todo *Todo) CreateOneTask() http.HandlerFunc {
 		Err string `json:"error"`
 	}
 
+	// NOTE: chúng ta không cần kiểm tra lỗi trả về từ hàm số `Encode` vì
+	// + các struct không chứ kiểu dữ liệu không các kiểu không được hỗ trợ bởi JSON
+	// + các struct không phải là cyclic data structure
+	// Đọc thêm tại https://golang.org/pkg/encoding/json/#Marshal
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		task := storage.Task{}
 		if err := json.NewDecoder(r.Body).Decode(&task); err != nil {
@@ -74,12 +78,8 @@ func (todo *Todo) CreateOneTask() http.HandlerFunc {
 			return
 		}
 
-		if err := json.NewEncoder(w).Encode(newTask); err != nil {
-			log.Println(err)
-			w.WriteHeader(http.StatusInternalServerError)
-			json.NewEncoder(w).Encode(errResponse{err.Error()})
-			return
-		}
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(newTask)
 	})
 }
 
