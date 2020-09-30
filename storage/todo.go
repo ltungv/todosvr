@@ -44,8 +44,8 @@ func NewTodo(db *sql.DB) *Todo {
 	}
 }
 
-// CreateOne tạo một tác vụ mới và thêm nó vào cơ sở dữ liệu.
-// Thông tin của tác vụ được thêm vào sẽ được trả về kèm với lỗi có thể xảy ra.
+// CreateOne thêm một tác vụ mới vào cơ sở dữ liệu và trả về tác vụ được thêm vào
+// (kèm với thông tin đã được cập nhật)
 func (todo *Todo) CreateOne(ctx context.Context, task Task) (*Task, error) {
 	txErr := todo.makeTx(ctx, func(tx *sql.Tx) error {
 		res, err := tx.Exec(
@@ -80,6 +80,23 @@ func (todo *Todo) CreateOne(ctx context.Context, task Task) (*Task, error) {
 	}
 
 	return &task, nil
+}
+
+// ReadAll trả về tất cả các tác vụ có trong cơ sở dữ liệu
+// TODO: giới hạn số lượng tác vụ được trả về
+func (todo *Todo) ReadAll(ctx context.Context) ([]*Task, error) {
+	panic("NOT IMPLEMENTED")
+}
+
+// UpdateOne cập nhật thông tin của một tác vụ có trong database và trả về tác vụ đó
+// (kèm với thông tin đã được cập nhật)
+func (todo *Todo) UpdateOne(ctx context.Context, id int64, task Task) (*Task, error) {
+	panic("NOT IMPLEMENTED")
+}
+
+// DeleteOne loại bỏ một tác vụ khỏi cơ sở dữ liệu
+func (todo *Todo) DeleteOne(ctx context.Context, id int64) error {
+	panic("NOT IMPLEMENTED")
 }
 
 // makeTx gíup đơn giản hoá việt sử dụng transaction. Hàm số này sẽ tạo một transaction,
