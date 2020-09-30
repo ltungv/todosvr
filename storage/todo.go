@@ -10,7 +10,7 @@ import (
 
 // TODO: giới thiệu go test
 
-// Metadata chứa các thông tin được chèn thêm để mô tả các thông tin được chứa trong cơ sỏ dữ liệu.
+// Metadata chứa các thông tin phụ trợ.
 type Metadata struct {
 	ID        int64     `json:"id"`
 	CreatedAt time.Time `json:"created_at"`
@@ -44,8 +44,7 @@ func NewTodo(db *sql.DB) *Todo {
 	}
 }
 
-// CreateOne thêm một tác vụ mới vào cơ sở dữ liệu và trả về tác vụ được thêm vào
-// (kèm với thông tin đã được cập nhật)
+// CreateOne thêm một tác vụ mới vào cơ sở dữ liệu và trả về tác vụ được thêm vào (kèm với thông tin đã được cập nhật).
 func (todo *Todo) CreateOne(ctx context.Context, task Task) (*Task, error) {
 	txErr := todo.makeTx(ctx, func(tx *sql.Tx) error {
 		res, err := tx.Exec(
@@ -82,19 +81,18 @@ func (todo *Todo) CreateOne(ctx context.Context, task Task) (*Task, error) {
 	return &task, nil
 }
 
-// ReadAll trả về tất cả các tác vụ có trong cơ sở dữ liệu
+// ReadAll trả về tất cả các tác vụ có trong cơ sở dữ liệu.
 // TODO: giới hạn số lượng tác vụ được trả về
 func (todo *Todo) ReadAll(ctx context.Context) ([]*Task, error) {
 	panic("NOT IMPLEMENTED")
 }
 
-// UpdateOne cập nhật thông tin của một tác vụ có trong database và trả về tác vụ đó
-// (kèm với thông tin đã được cập nhật)
+// UpdateOne cập nhật thông tin của một tác vụ có trong cơ sở dữ liệu và trả về tác vụ đó (kèm với thông tin đã được cập nhật).
 func (todo *Todo) UpdateOne(ctx context.Context, id int64, task Task) (*Task, error) {
 	panic("NOT IMPLEMENTED")
 }
 
-// DeleteOne loại bỏ một tác vụ khỏi cơ sở dữ liệu
+// DeleteOne loại bỏ một tác vụ khỏi cơ sở dữ liệu.
 func (todo *Todo) DeleteOne(ctx context.Context, id int64) error {
 	panic("NOT IMPLEMENTED")
 }

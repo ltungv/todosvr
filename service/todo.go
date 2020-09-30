@@ -12,14 +12,14 @@ import (
 	"rsc.io/quote/v3"
 )
 
-// Todo chứa các hàm số dùng để khởi tạo và chạy dịch vụ API
+// Todo chứa các hàm số dùng để khởi tạo và chạy dịch vụ API.
 // TODO: thêm database để  lưu trữ dữ liệu người dùng
 type Todo struct {
 	router  chi.Router
 	storage *storage.Todo
 }
 
-// NewTodo khởi tạo dịch vụ API
+// NewTodo khởi tạo dịch vụ API.
 func NewTodo(storage *storage.Todo) *Todo {
 	t := Todo{
 		router:  chi.NewRouter(),
@@ -30,12 +30,12 @@ func NewTodo(storage *storage.Todo) *Todo {
 	return &t
 }
 
-// ServeHTTP dùng để gọi hàm số cung cấp bởi router nhằm thoả mãn interface http.Handler
+// ServeHTTP dùng để gọi hàm số cung cấp bởi router nhằm thoả mãn interface http.Handler.
 func (todo *Todo) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	todo.router.ServeHTTP(w, r)
 }
 
-// routes cài đặt các đường dẫn HTTP được hỗ trợ bởi dịch vụ
+// routes cài đặt các đường dẫn HTTP được hỗ trợ bởi dịch vụ.
 // TODO: thêm handlers để xử lý thao tác CRUD
 func (todo *Todo) routes() {
 	todo.router.Use(
@@ -48,14 +48,14 @@ func (todo *Todo) routes() {
 	todo.router.Post("/todo", todo.CreateOneTask())
 }
 
-// CreateOneTask lấy thông tin của một tác vụ từ body của request rồi gửi cho storage.Todo để xứ lý
+// CreateOneTask lấy thông tin của một tác vụ từ body của request rồi gửi cho storage.Todo để xứ lý.
 func (todo *Todo) CreateOneTask() http.HandlerFunc {
 	type errResponse struct {
 		Err string `json:"error"`
 	}
 
-	// NOTE: chúng ta không cần kiểm tra lỗi trả về từ hàm số `Encode` vì
-	// + các struct không chứ kiểu dữ liệu không các kiểu không được hỗ trợ bởi JSON
+	// NOTE: chúng ta không cần kiểm tra lỗi trả về từ hàm số `Encode` vì:
+	// + các struct không chứa các kiểu dữ liệu không được hỗ trợ bởi JSON
 	// + các struct không phải là cyclic data structure
 	// Đọc thêm tại https://golang.org/pkg/encoding/json/#Marshal
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -67,7 +67,7 @@ func (todo *Todo) CreateOneTask() http.HandlerFunc {
 			return
 		}
 
-		// TODO: kiểm tra thông tin task được gửi vào.
+		// TODO: kiểm tra thông tin của `task`
 		// TODO: giải thích thư viện "context"
 
 		newTask, err := todo.storage.CreateOne(r.Context(), task)
@@ -83,8 +83,7 @@ func (todo *Todo) CreateOneTask() http.HandlerFunc {
 	})
 }
 
-// GetHello trả về một handler có thể xử lý yêu cầu HTTP
-// và trả về chuỗi ký tự "Hello, world." nằm trong một object JSON
+// GetHello trả về một handler có thể xử lý yêu cầu HTTP và trả về chuỗi ký tự "Hello, world." nằm trong một object JSON.
 func (todo *Todo) GetHello() http.HandlerFunc {
 	type response struct {
 		Message string `json:"message"`
