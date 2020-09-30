@@ -82,6 +82,9 @@ func (todo *Todo) CreateOne(ctx context.Context, task Task) (*Task, error) {
 	return &task, nil
 }
 
+// makeTx gíup đơn giản hoá việt sử dụng transaction. Hàm số này sẽ tạo một transaction,
+// sử dụng function được truyền vào lên trasaction đó rồi kiểm tra lỗi có thể xảy ra.
+// Với hàm số này, bạn không cần phải tự gọi `Rollback` mỗi khi có lỗi.
 func (todo *Todo) makeTx(ctx context.Context, f txFunc) error {
 	tx, err := todo.db.BeginTx(ctx, nil)
 	if err != nil {

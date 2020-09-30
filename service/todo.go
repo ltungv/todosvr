@@ -46,27 +46,36 @@ func (todo *Todo) routes() {
 	todo.router.Post("/todo", todo.CreateOneTask())
 }
 
+// CreateOneTask lấy thông tin của một tác vụ từ body của request rồi gửi cho storage.Todo để xứ lý
 func (todo *Todo) CreateOneTask() http.HandlerFunc {
+	type errResponse struct {
+		Err string `json:"error"`
+	}
+
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		task := storage.Task{}
 		if err := json.NewDecoder(r.Body).Decode(&task); err != nil {
 			log.Println(err)
-			w.WriteHeader(http.StatusInternalServerError)
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(errResponse{err.Error()})
 			return
 		}
 
 		// TODO: kiểm tra thông tin task được gửi vào.
+		// TODO: giải thích thư viện "context"
 
 		newTask, err := todo.storage.CreateOne(r.Context(), task)
 		if err != nil {
 			log.Println(err)
 			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(errResponse{err.Error()})
 			return
 		}
 
 		if err := json.NewEncoder(w).Encode(newTask); err != nil {
 			log.Println(err)
 			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(errResponse{err.Error()})
 			return
 		}
 	})
@@ -76,7 +85,7 @@ func (todo *Todo) CreateOneTask() http.HandlerFunc {
 // và trả về chuỗi ký tự "Hello, world." nằm trong một object JSON
 func (todo *Todo) GetHello() http.HandlerFunc {
 	type response struct {
-		Message string
+		Message string `json:"message"`
 	}
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
