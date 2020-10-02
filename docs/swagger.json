@@ -1,0 +1,74 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "contact": {
+            "name": "Tung L. Vo",
+            "url": "https://github.com/letung3105",
+            "email": "letung3105@gmail.com"
+        },
+        "license": {
+            "name": "MIT",
+            "url": "https://mit-license.org"
+        }
+    },
+    "paths": {
+        "/todo": {
+            "post": {
+                "description": "trả về chuỗi kí tự \"Hello World\"",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Hello world",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/service.SimpleMsgResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "service.ErrResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "service.SimpleMsgResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "storage.Task": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "done": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "subtitle": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

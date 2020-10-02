@@ -1,0 +1,47 @@
+definitions:
+  service.ErrResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  service.SimpleMsgResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  storage.Task:
+    properties:
+      created_at:
+        type: string
+      done:
+        type: boolean
+      id:
+        type: integer
+      subtitle:
+        type: string
+      title:
+        type: string
+      updated_at:
+        type: string
+    type: object
+info:
+  contact:
+    email: letung3105@gmail.com
+    name: Tung L. Vo
+    url: https://github.com/letung3105
+  license:
+    name: MIT
+    url: https://mit-license.org
+paths:
+  /todo:
+    post:
+      description: trả về chuỗi kí tự "Hello World"
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/service.SimpleMsgResponse'
+      summary: Hello world
+swagger: "2.0"
