@@ -10,6 +10,8 @@ import (
 	"github.com/ory/dockertest"
 )
 
+var db *sql.DB
+
 func TestMain(m *testing.M) {
 	// uses a sensible default on windows (tcp/http) and linux/osx (socket)
 	pool, err := dockertest.NewPool("")
