@@ -3,7 +3,6 @@ package main
 import (
 	"database/sql"
 	"flag"
-	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -17,15 +16,11 @@ import (
 )
 
 var (
-	host = ""
-	port = 3000
-	dsn  = ""
+	host     = flag.String("host", "localhost:3000", "Host address to bind to")
+	dsnMySQL = flag.String("dsn_mysql", "@/todosvr", "The connection string of the database")
 )
 
 func init() {
-	flag.StringVar(&dsn, "dsn", "@/todosvr", "The connection string of the database")
-	flag.StringVar(&host, "host", "localhost", "Host address to bind to")
-	flag.IntVar(&port, "port", 3000, "Port number to bind to")
 }
 
 // @contact.name Tung L. Vo
@@ -37,43 +32,32 @@ func init() {
 func main() {
 	flag.Parse()
 
+	// Swagger documentations
 	docs.SwaggerInfo.Title = "Todo API"
 	docs.SwaggerInfo.Description = "Dịch vụ API đơn giản"
 	docs.SwaggerInfo.Version = "0.1.0"
-	docs.SwaggerInfo.Host = fmt.Sprintf("%s:%d", host, port)
+	docs.SwaggerInfo.Host = *host
 	docs.SwaggerInfo.BasePath = "/"
 	docs.SwaggerInfo.Schemes = []string{"http"}
 
-	// TODO: cài đặt cơ sở dữ liệu thông qua cấu hình tuỳ chỉnh
-	cfg, err := mysql.ParseDSN(dsn)
+	// create an MySQL database object
+	db, err := initMySQL(*dsnMySQL)
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	cfg.ParseTime = true
-	// ^ NOTE: phải cài đặt để có thể Scan các biến có kiểu dữ liệu time.Time
-	cfg.ReadTimeout = 200 * time.Millisecond
-	cfg.WriteTimeout = 300 * time.Millisecond
-
-	db, err := sql.Open("mysql", cfg.FormatDSN())
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	if err := db.Ping(); err != nil {
 		log.Fatal(err)
 	}
 
 	r := chi.NewRouter()
 	r.Get("/swagger/*", httpSwagger.Handler(
+		// doc.json được tạo từ package `docs`
 		httpSwagger.URL("http://localhost:3000/swagger/doc.json"),
-		// ^ NOTE: đường dẫn tới tệp tin JSON chứa định nghĩa của API,
-		// thông tin của tệp tin này được tạo bởi package docs
 	))
 	r.Mount("/", service.NewTodo(storage.NewTodo(db)))
 
 	svr := http.Server{
-		Addr:         fmt.Sprintf("%s:%d", host, port),
+		Addr:         *host,
 		Handler:      r,
 		TLSConfig:    nil,
 		WriteTimeout: time.Second, // thời gian tối đa được dùng để ghi gói tin
@@ -85,4 +69,18 @@ func main() {
 	if err := svr.ListenAndServe(); err != http.ErrServerClosed {
 		log.Println(err)
 	}
+}
+
+func initMySQL(dsn string) (*sql.DB, error) {
+	// TODO: cài đặt cơ sở dữ liệu thông qua cấu hình tuỳ chỉnh
+	cfg, err := mysql.ParseDSN(dsn)
+	if err != nil {
+		return nil, err
+	}
+
+	cfg.ParseTime = true // NOTE: phải cài đặt để có thể Scan các biến có kiểu dữ liệu time.Time
+	cfg.ReadTimeout = 200 * time.Millisecond
+	cfg.WriteTimeout = 300 * time.Millisecond
+
+	return sql.Open("mysql", cfg.FormatDSN())
 }
