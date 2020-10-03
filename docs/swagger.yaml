@@ -33,8 +33,8 @@ info:
     name: MIT
     url: https://mit-license.org
 paths:
-  /todo:
-    post:
+  /hello:
+    get:
       description: trả về chuỗi kí tự "Hello World"
       produces:
       - application/json
@@ -44,4 +44,32 @@ paths:
           schema:
             $ref: '#/definitions/service.SimpleMsgResponse'
       summary: Hello world
+  /todo:
+    post:
+      consumes:
+      - application/json
+      description: tạo một tác vụ mới
+      parameters:
+      - description: tác vụ được thêm vào
+        in: body
+        name: task
+        required: true
+        schema:
+          $ref: '#/definitions/storage.Task'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/storage.Task'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/service.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/service.ErrResponse'
+      summary: Create one task
 swagger: "2.0"

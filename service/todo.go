@@ -8,8 +8,8 @@ import (
 	"os"
 
 	"github.com/go-chi/chi"
-	"github.com/letung3105/todos-svr/middleware"
-	"github.com/letung3105/todos-svr/storage"
+	"github.com/go-chi/chi/middleware"
+	"github.com/letung3105/todosvr/storage"
 	"rsc.io/quote/v3"
 )
 
@@ -43,14 +43,15 @@ func (todo *Todo) routes() {
 	}
 
 	todo.router.Use(
-		middleware.JSONResponse(),
-		middleware.LogRequest(log.New(os.Stdout, "", log.LstdFlags)),
+		HeaderResponseContentTypeJSON,
+		middleware.Recoverer,
+		RequestLogger(log.New(os.Stdout, "", log.LstdFlags)),
 	)
 	todo.router.Get("/hello", todo.GetHello())
 	todo.router.Post("/todo", todo.CreateOneTask())
 	todo.router.Get("/todo", notImpl)
 	todo.router.Route("/todo/{id}", func(r chi.Router) {
-		r.Use(TaskIDCtx())
+		r.Use(TaskIDCtx)
 		r.Get("/", notImpl)
 		r.Put("/", notImpl)
 		r.Delete("/", notImpl)
@@ -65,7 +66,7 @@ func (todo *Todo) routes() {
 // @Param task body storage.Task true "tác vụ được thêm vào"
 // @Failure 500 {object} service.ErrResponse
 // @Failure 400 {object} service.ErrResponse
-// @Success 200 {array} storage.Task
+// @Success 200 {object} storage.Task
 // @Router /todo [post]
 func (todo *Todo) CreateOneTask() http.HandlerFunc {
 	// NOTE: chúng ta không cần kiểm tra lỗi trả về từ hàm số `Encode` vì:
@@ -100,7 +101,7 @@ func (todo *Todo) CreateOneTask() http.HandlerFunc {
 // @Description trả về chuỗi kí tự "Hello World"
 // @Produce json
 // @Success 200 {object} service.SimpleMsgResponse
-// @Router /todo [post]
+// @Router /hello [get]
 func (todo *Todo) GetHello() http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(SimpleMsgResponse{quote.HelloV3()})
@@ -116,13 +117,11 @@ type ctxKey string
 var TaskIDCtxKey = ctxKey("TaskIDCtxKey")
 
 // TaskIDCtx lấy id của task từ đường dẫn url
-func TaskIDCtx() middleware.Middleware {
-	return func(next http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			ctx := context.WithValue(r.Context(), TaskIDCtxKey, chi.URLParam(r, "id"))
-			next.ServeHTTP(w, r.WithContext(ctx))
-		})
-	}
+func TaskIDCtx(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := context.WithValue(r.Context(), TaskIDCtxKey, chi.URLParam(r, "id"))
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
 }
 
 // SimpleMsgResponse chứa một tin nhắn đơn giản được trả về từ server

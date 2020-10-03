@@ -9,9 +9,9 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/go-sql-driver/mysql"
-	"github.com/letung3105/todos-svr/docs"
-	"github.com/letung3105/todos-svr/service"
-	"github.com/letung3105/todos-svr/storage"
+	"github.com/letung3105/todosvr/docs"
+	"github.com/letung3105/todosvr/service"
+	"github.com/letung3105/todosvr/storage"
 	httpSwagger "github.com/swaggo/http-swagger"
 )
 
@@ -66,6 +66,7 @@ func main() {
 	}
 
 	// TODO: graceful shutdown
+	log.Printf("Listen and server on %s", *host)
 	if err := svr.ListenAndServe(); err != http.ErrServerClosed {
 		log.Println(err)
 	}

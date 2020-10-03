@@ -32,8 +32,8 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/todo": {
-            "post": {
+        "/hello": {
+            "get": {
                 "description": "trả về chuỗi kí tự \"Hello World\"",
                 "produces": [
                     "application/json"
@@ -44,6 +44,49 @@ var doc = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/service.SimpleMsgResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/todo": {
+            "post": {
+                "description": "tạo một tác vụ mới",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Create one task",
+                "parameters": [
+                    {
+                        "description": "tác vụ được thêm vào",
+                        "name": "task",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/storage.Task"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/storage.Task"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/service.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/service.ErrResponse"
                         }
                     }
                 }

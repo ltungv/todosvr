@@ -1,4 +1,4 @@
-module github.com/letung3105/todos-svr
+module github.com/letung3105/todosvr
 
 go 1.15
 
