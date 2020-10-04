@@ -1,15 +1,5 @@
 definitions:
-  service.ErrResponse:
-    properties:
-      error:
-        type: string
-    type: object
-  service.SimpleMsgResponse:
-    properties:
-      message:
-        type: string
-    type: object
-  storage.Task:
+  service.requestCreateOneTask:
     properties:
       created_at:
         type: string
@@ -22,6 +12,31 @@ definitions:
       title:
         type: string
       updated_at:
+        type: string
+    type: object
+  service.responseCreateOneTask:
+    properties:
+      created_at:
+        type: string
+      done:
+        type: boolean
+      id:
+        type: integer
+      subtitle:
+        type: string
+      title:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  service.responseCreateOneTaskErr:
+    properties:
+      error:
+        type: string
+    type: object
+  service.responseGetHello:
+    properties:
+      message:
         type: string
     type: object
 info:
@@ -42,7 +57,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/service.SimpleMsgResponse'
+            $ref: '#/definitions/service.responseGetHello'
       summary: Hello world
   /todo:
     post:
@@ -55,21 +70,21 @@ paths:
         name: task
         required: true
         schema:
-          $ref: '#/definitions/storage.Task'
+          $ref: '#/definitions/service.requestCreateOneTask'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/storage.Task'
+            $ref: '#/definitions/service.responseCreateOneTask'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/service.ErrResponse'
+            $ref: '#/definitions/service.responseCreateOneTaskErr'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/service.ErrResponse'
+            $ref: '#/definitions/service.responseCreateOneTaskErr'
       summary: Create one task
 swagger: "2.0"

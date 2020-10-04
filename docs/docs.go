@@ -43,7 +43,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/service.SimpleMsgResponse"
+                            "$ref": "#/definitions/service.responseGetHello"
                         }
                     }
                 }
@@ -66,7 +66,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/storage.Task"
+                            "$ref": "#/definitions/service.requestCreateOneTask"
                         }
                     }
                 ],
@@ -74,19 +74,19 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/storage.Task"
+                            "$ref": "#/definitions/service.responseCreateOneTask"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/service.ErrResponse"
+                            "$ref": "#/definitions/service.responseCreateOneTaskErr"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/service.ErrResponse"
+                            "$ref": "#/definitions/service.responseCreateOneTaskErr"
                         }
                     }
                 }
@@ -94,23 +94,7 @@ var doc = `{
         }
     },
     "definitions": {
-        "service.ErrResponse": {
-            "type": "object",
-            "properties": {
-                "error": {
-                    "type": "string"
-                }
-            }
-        },
-        "service.SimpleMsgResponse": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string"
-                }
-            }
-        },
-        "storage.Task": {
+        "service.requestCreateOneTask": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -129,6 +113,45 @@ var doc = `{
                     "type": "string"
                 },
                 "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "service.responseCreateOneTask": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "done": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "subtitle": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "service.responseCreateOneTaskErr": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "service.responseGetHello": {
+            "type": "object",
+            "properties": {
+                "message": {
                     "type": "string"
                 }
             }
